@@ -5,6 +5,37 @@ Cette plateforme permet de **préparer, entraîner, déployer et monitorer des m
 
 ---
 
+## ⚙️ Fonctionnalités principales
+
+1. **Préparation des données** : nettoyage, imputation, encodage, scaling via PySpark / Pandas.  
+2. **Entraînement multi-modèles** : Logistic Regression, XGBoost, Neural Network.  
+3. **Tracking et versioning** : MLflow pour enregistrer paramètres, métriques et modèles.  
+4. **Export industriel** : modèles exportés en ONNX/PMML pour déploiement.  
+5. **API REST FastAPI** : prédictions en temps réel.  
+6. **Containerisation Docker** : déploiement reproductible.  
+7. **CI/CD** : build, test et déploiement automatisés (GitHub Actions / Jenkins).  
+8. **Monitoring & recalibrage** : Evidently AI pour dérive de données et déclenchement automatique de réentraînement.
+
+---
+
+## 🚀 Pipeline global
+
+```mermaid
+graph TD
+    A[Kafka / S3 Data] --> B[PySpark Preprocessing]
+    B --> C["Model Training: LR / XGBoost / NN"]
+    C --> D["Tracking with MLflow"]
+    D --> E["Export Model: ONNX / PMML"]
+    E --> F["FastAPI + Docker Deployment"]
+    F --> G["CI/CD Pipeline (GitHub Actions)"]
+    F --> H["Monitoring & Drift Detection (Evidently AI)"]
+    H --> I["Retrain Trigger (Automatic Recalibration)"]
+```
+
+---
+
+---
+
 ## 🗂️ Structure du projet
 
 ```bash
@@ -89,7 +120,6 @@ credit_scoring_mlops/
 ```
 ---
 
-
 **Description rapide :**
 
 - **data/** : jeux de données bruts et transformés.  
@@ -98,35 +128,67 @@ credit_scoring_mlops/
 - **ci_cd/** : pipelines CI/CD pour build et déploiement.  
 - **models/** : modèles sauvegardés (Pickle, ONNX) + historiques MLflow.  
 - **tests/** : tests unitaires pour chaque étape du pipeline.  
-- **dashboards/** : dashboards de suivi de performance et dérive.  
-
+- **dashboards/** : dashboards de suivi de performance et dérive.
 ---
-
-## ⚙️ Fonctionnalités principales
-
-1. **Préparation des données** : nettoyage, imputation, encodage, scaling via PySpark / Pandas.  
-2. **Entraînement multi-modèles** : Logistic Regression, XGBoost, Neural Network.  
-3. **Tracking et versioning** : MLflow pour enregistrer paramètres, métriques et modèles.  
-4. **Export industriel** : modèles exportés en ONNX/PMML pour déploiement.  
-5. **API REST FastAPI** : prédictions en temps réel.  
-6. **Containerisation Docker** : déploiement reproductible.  
-7. **CI/CD** : build, test et déploiement automatisés (GitHub Actions / Jenkins).  
-8. **Monitoring & recalibrage** : Evidently AI pour dérive de données et déclenchement automatique de réentraînement.
-
----
-
-## 🚀 Pipeline global
-
 ```mermaid
-graph TD
-A[Kafka / S3 Data] --> B[PySpark Preprocessing]
-B --> C[Model Training (LR / XGBoost / NN)]
-C --> D[Tracking MLflow]
-D --> E[Export ONNX / PMML]
-E --> F[FastAPI + Docker Deployment]
-F --> G[CI/CD Pipeline (GitHub Actions)]
-F --> H[Monitoring & Drift Detection (Evidently AI)]
-H --> I[Retrain Trigger (Automatic Recalibration)]
+flowchart LR
+    %% DATA
+    subgraph DATA["📁 DATA"]
+        RAW[raw/ - données brutes]
+        PROCESSED[processed/ - données transformées]
+        REFERENCE[reference/ - données référentielles]
+        NEW[new_data/ - nouvelles données pour recalibrage]
+    end
+
+    %% NOTEBOOKS
+    subgraph NOTEBOOKS["📁 NOTEBOOKS"]
+        EXPLO[exploration.ipynb - analyse exploratoire]
+        COMP[model_comparison.ipynb - comparaison modèles]
+        DRIFT[monitoring_drift.ipynb - suivi dérive]
+    end
+
+    %% SRC
+    subgraph SRC["📁 SRC"]
+        PREP[preprocessing - nettoyage, encodage, scaling]
+        TRAIN[training - entraînement modèles]
+        EXPORT[export - export ONNX/PMML]
+        DEPLOY[deployment - API FastAPI + Docker]
+        MON[monitoring - détection dérive & recalibrage]
+        UTILS[utils - config, logger, SparkSession]
+    end
+
+    %% MODELS
+    subgraph MODELS["📁 MODELS"]
+        PICKLE[xgb_credit_model.pkl]
+        ONNX[xgb_credit_model.onnx]
+        METADATA[model_metadata.json]
+        MLRUNS[mlruns/ - tracking MLflow]
+    end
+
+    %% DASHBOARDS
+    subgraph DASH["📁 DASH"]
+        MONITOR[credit_model_monitoring.html]
+        DRIFT_REPORT[drift_report.html]
+    end
+
+    %% CICD
+    subgraph CICD["📁 CICD"]
+        GHA[github_actions.yml]
+        DOCKER_COMPOSE[docker-compose.yml]
+        JENKINS[Jenkinsfile]
+    end
+
+    %% Flux de données et interactions
+    RAW --> PROCESSED --> REFERENCE
+    NEW --> MON
+    PROCESSED --> PREP --> TRAIN --> EXPORT --> DEPLOY
+    TRAIN --> MLRUNS
+    DEPLOY --> CICD
+    MON --> DASH
+    NOTEBOOKS --> PREP
+    NOTEBOOKS --> TRAIN
+    NOTEBOOKS --> MON
+
 ```
 ---
 
