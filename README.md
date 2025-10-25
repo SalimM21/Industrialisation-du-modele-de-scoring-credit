@@ -1,4 +1,4 @@
-# Industrialisation-du-modele-de-scoring-credit => Scoring MLOps Platform
+# 🧠 Industrialisation du modele de scoring credit => Scoring MLOps Platform
 
 ## 🎯 Objectif
 Cette plateforme permet de **préparer, entraîner, déployer et monitorer des modèles de scoring crédit**. Elle inclut l’ingestion de données en streaming, l’entraînement multi-modèles, le suivi MLflow, l’industrialisation via API FastAPI/Docker et la surveillance de dérive via Evidently AI.
