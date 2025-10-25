@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  # -----------------------------
+  # API FastAPI
+  # -----------------------------
+  api:
+    build: .
+    container_name: credit_scoring_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./logs:/app/logs
+      - ./models:/app/models
+      - ./dashboards:/app/dashboards
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+    depends_on:
+      - mlflow
+
+  # -----------------------------
+  # MLflow tracking server
+  # -----------------------------
+  mlflow:
+    image: quay.io/mlflow/mlflow:2.8.0
+    container_name: mlflow_server
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./mlruns:/mlflow/mlruns
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_ARTIFACT_URI=/mlflow/mlruns
+    command: mlflow server \
+      --backend-store-uri /mlflow/mlruns \
+      --default-artifact-root /mlflow/mlruns \
+      --host 0.0.0.0 \
+      --port 5000
+
+  # -----------------------------
+  # Monitoring / Dashboard
+  # -----------------------------
+  monitoring:
+    image: python:3.11-slim
+    container_name: evidently_dashboard
+    volumes:
+      - ./dashboards:/app/dashboards
+      - ./data/processed:/app/data
+      - ./models:/app/models
+      - ./src:/app/src
+    working_dir: /app
+    command: python src/generate_report.py
+    depends_on:
+      - api
