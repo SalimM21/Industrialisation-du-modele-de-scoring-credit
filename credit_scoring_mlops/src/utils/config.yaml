@@ -1,0 +1,74 @@
+# -----------------------------
+# Chemins des fichiers et dossiers
+# -----------------------------
+paths:
+  data_raw: "../data/raw/"
+  data_processed: "../data/processed/"
+  models: "../models/"
+  logs: "../logs/"
+  dashboards: "../dashboards/"
+  notebooks: "../notebooks/"
+
+# -----------------------------
+# Paramètres du modèle
+# -----------------------------
+model_params:
+  logistic_regression:
+    C: 1.0
+    penalty: "l2"
+    solver: "liblinear"
+    max_iter: 100
+  xgboost:
+    n_estimators: 200
+    max_depth: 5
+    learning_rate: 0.1
+    subsample: 0.8
+    colsample_bytree: 0.8
+    random_state: 42
+  neural_network:
+    input_dim: 10
+    hidden_layers: [64, 32]
+    activation: "relu"
+    output_activation: "sigmoid"
+    epochs: 50
+    batch_size: 32
+    learning_rate: 0.001
+    validation_split: 0.2
+
+# -----------------------------
+# Paramètres de preprocessing
+# -----------------------------
+preprocessing:
+  scaling: "StandardScaler"
+  encoding: "OneHotEncoder"
+  imputation: "mean"
+
+# -----------------------------
+# Seuils et critères
+# -----------------------------
+thresholds:
+  risk_class: 0.5
+  drift_detection: True
+
+# -----------------------------
+# MLflow
+# -----------------------------
+mlflow:
+  tracking_uri: "http://localhost:5000"
+  experiment_name: "credit_scoring"
+
+# -----------------------------
+# Spark
+# -----------------------------
+spark:
+  shuffle_partitions: 200
+  executor_memory: "2g"
+  driver_memory: "2g"
+
+# -----------------------------
+# Autres paramètres
+# -----------------------------
+general:
+  random_seed: 42
+  test_size: 0.2
+  validation_size: 0.2
