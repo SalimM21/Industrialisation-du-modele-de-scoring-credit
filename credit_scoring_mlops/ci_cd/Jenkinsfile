@@ -1,0 +1,107 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "credit-scoring-api:latest"
+        DEPLOY_HOST = credentials('SERVER_HOST')  // Jenkins Credentials
+        DEPLOY_USER = credentials('SERVER_USER')
+        SSH_KEY     = credentials('SERVER_SSH_KEY')
+    }
+
+    stages {
+        // -----------------------------
+        // 1. Checkout du code
+        // -----------------------------
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        // -----------------------------
+        // 2. Setup Python et dependencies
+        // -----------------------------
+        stage('Setup Python') {
+            steps {
+                sh """
+                python3 -m venv venv
+                source venv/bin/activate
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                """
+            }
+        }
+
+        // -----------------------------
+        // 3. Linting
+        // -----------------------------
+        stage('Lint') {
+            steps {
+                sh "pip install flake8 && flake8 ."
+            }
+        }
+
+        // -----------------------------
+        // 4. Run unit tests
+        // -----------------------------
+        stage('Tests') {
+            steps {
+                sh "pip install pytest && pytest -v"
+            }
+        }
+
+        // -----------------------------
+        // 5. Build Docker image
+        // -----------------------------
+        stage('Docker Build') {
+            steps {
+                sh "docker build -t ${DOCKER_IMAGE} ."
+            }
+        }
+
+        // -----------------------------
+        // 6. Test Docker container
+        // -----------------------------
+        stage('Test Docker Container') {
+            steps {
+                sh """
+                docker run --rm -d -p 8000:8000 --name test_container ${DOCKER_IMAGE}
+                sleep 10
+                curl -f http://localhost:8000/docs || exit 1
+                docker stop test_container
+                """
+            }
+        }
+
+        // -----------------------------
+        // 7. Deploy (via SSH)
+        // -----------------------------
+        stage('Deploy') {
+            steps {
+                sshagent(['SSH_CREDENTIALS_ID']) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} '
+                        cd /home/ubuntu/credit_scoring &&
+                        docker pull ${DOCKER_IMAGE} &&
+                        docker stop credit_scoring || true &&
+                        docker rm credit_scoring || true &&
+                        docker run -d --name credit_scoring -p 8000:8000 ${DOCKER_IMAGE}
+                    '
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline terminée.'
+        }
+        success {
+            echo '✅ Pipeline réussie !'
+        }
+        failure {
+            echo '❌ Pipeline échouée !'
+        }
+    }
+}
