@@ -1,0 +1,34 @@
+# Web API
+fastapi==0.111.1
+uvicorn[standard]==0.23.2
+pydantic==2.6.0
+
+# Data processing
+numpy==1.26.0
+pandas==2.1.1
+scikit-learn==1.3.1
+
+# Machine Learning Models
+xgboost==1.7.7
+tensorflow==2.14.0
+imbalanced-learn==0.12.1
+
+# MLflow tracking
+mlflow==2.8.0
+
+# Model export / interoperability
+onnx==1.17.0
+onnxmltools==1.13.0
+tf2onnx==1.16.0
+sklearn2pmml==0.82.0
+pypmml==0.9.12
+
+# Monitoring & drift
+evidently==0.2.13
+
+# Logging & utils
+loguru==0.7.2
+
+# Optional (for Docker & CI/CD)
+python-dotenv==1.0.0
+requests==2.31.0
