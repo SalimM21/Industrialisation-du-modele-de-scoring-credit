@@ -21,6 +21,34 @@ Cette plateforme permet de **préparer, entraîner, déployer et monitorer des m
 ## 🚀 Pipeline global
 
 ```mermaid
+graph LR
+    A[DATA: brutes] --> B[DATA: transformées]
+    B --> C[DATA: référentielles]
+    C --> D[DATA: nouvelles pour recalibrage]
+    
+    B --> E[NOTEBOOKS: exploration]
+    B --> F[NOTEBOOKS: comparaison modèles]
+    D --> G[NOTEBOOKS: monitoring dérive]
+    
+    B --> H[SRC: preprocessing.py]
+    B --> I[SRC: feature_selection.py]
+    B --> J[SRC: split_data.py]
+    H --> K[SRC: train_lr.py]
+    H --> L[SRC: train_xgb.py]
+    H --> M[SRC: train_nn.py]
+    K --> N[SRC: evaluate_models.py]
+    L --> N
+    M --> N
+    N --> O[SRC: export_model.py]
+    O --> P[SRC: register_mlflow.py]
+    
+    P --> Q[SRC: main.py / API FastAPI]
+    Q --> R[DASH: dashboards / monitoring]
+    
+    SRC --> S[CICD: GitHub Actions / Docker Compose / Jenkins]
+```
+
+```mermaid
 graph TD
     A[Kafka / S3 Data] --> B[PySpark Preprocessing]
     B --> C["Model Training: LR / XGBoost / NN"]
@@ -31,9 +59,6 @@ graph TD
     F --> H["Monitoring & Drift Detection (Evidently AI)"]
     H --> I["Retrain Trigger (Automatic Recalibration)"]
 ```
-
----
-
 ---
 
 ## 🗂️ Structure du projet
