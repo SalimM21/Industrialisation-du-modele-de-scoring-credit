@@ -1,0 +1,20 @@
+# === Airflow logs ==
+ci_cd/airflow/logs/
+ci_cd/airflow/dag_processor_manager/
+ci_cd/airflow/scheduler/
+
+# === Airflow runtime files ==
+*.pid
+*.db
+*.sqlite
+*/latest
+
+# === MLflow ===
+ci_cd/mlflow/
+
+# Cache Python
+__pycache__/
+*.pyc
+
+# Env
+.env
