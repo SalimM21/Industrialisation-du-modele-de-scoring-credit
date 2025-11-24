@@ -22,7 +22,7 @@ services:
   # MLflow tracking server
   # -----------------------------
   mlflow:
-    image: quay.io/mlflow/mlflow:2.8.0
+    image: mlflow/mlflow:latest
     container_name: mlflow_server
     ports:
       - "5000:5000"

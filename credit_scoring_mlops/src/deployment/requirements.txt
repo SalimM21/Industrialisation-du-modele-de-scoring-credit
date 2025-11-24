@@ -9,7 +9,7 @@ pandas==2.1.1
 scikit-learn==1.3.1
 
 # Machine Learning Models
-xgboost==1.7.7
+xgboost==2.0.3
 tensorflow==2.14.0
 imbalanced-learn==0.12.1
 
@@ -24,7 +24,7 @@ sklearn2pmml==0.82.0
 pypmml==0.9.12
 
 # Monitoring & drift
-evidently==0.2.13
+evidently==0.4.35
 
 # Logging & utils
 loguru==0.7.2
